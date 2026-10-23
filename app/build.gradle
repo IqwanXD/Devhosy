@@ -1,0 +1,43 @@
+plugins {
+	id 'com.android.application'
+}
+
+android {
+	compileSdk 34
+	
+	defaultConfig {
+		applicationId "ru.iqwanoino.devhosy"
+		namespace "ru.iqwanoino.devhosy"
+		minSdkVersion 24
+		targetSdkVersion 34
+		versionCode 11
+		versionName "0.11"
+	}
+	
+	// Signing release dibaca dari environment variable (diisi dari GitHub Secrets).
+	// Jika KEYSTORE_PATH tidak ada, release tetap dibuat tanpa tanda tangan.
+	signingConfigs {
+		release {
+			if (System.getenv("KEYSTORE_PATH")) {
+				storeFile file(System.getenv("KEYSTORE_PATH"))
+				storePassword System.getenv("KEYSTORE_PASSWORD")
+				keyAlias System.getenv("KEY_ALIAS")
+				keyPassword System.getenv("KEY_PASSWORD")
+			}
+		}
+	}
+
+	buildTypes {
+		release {
+			minifyEnabled false
+			proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+			if (System.getenv("KEYSTORE_PATH")) {
+				signingConfig signingConfigs.release
+			}
+		}
+	}
+}
+
+dependencies {
+	implementation fileTree(dir: 'libs', include: ['*.jar'])
+}
