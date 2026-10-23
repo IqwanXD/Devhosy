@@ -2,4 +2,6 @@
     <color name="colorPrimary">#01579B</color>
     <color name="colorPrimaryDark">#01579B</color>
     <color name="colorAccent">#01579B</color>
+    <color name="colorControlHighlight">#3301579B</color>
+    <color name="colorControlNormal">#8A000000</color>
 </resources>
