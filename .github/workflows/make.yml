@@ -61,12 +61,16 @@ jobs:
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
         run: gradle :app:assembleRelease --stacktrace
 
+      # apksigner verify gagal (exit code non-zero) bila tanda tangan tidak valid.
+      # Skema v2 (yang dipakai AGP untuk minSdk 24+) menampilkan "V2 Signer", bukan "Signer #1".
       - name: Verifikasi tanda tangan APK
         if: github.event_name != 'pull_request'
         run: |
           APKSIGNER=$(ls -d "$ANDROID_HOME"/build-tools/*/apksigner | sort -V | tail -1)
-          "$APKSIGNER" verify --print-certs app/build/outputs/apk/release/app-release.apk
-          "$APKSIGNER" verify --print-certs app/build/outputs/apk/release/app-release.apk | grep -q "Signer #1" \
+          APK=app/build/outputs/apk/release/app-release.apk
+          OUTPUT=$("$APKSIGNER" verify --print-certs "$APK")
+          echo "$OUTPUT"
+          echo "$OUTPUT" | grep -qE "Signer #1|V2 Signer" \
             || { echo "::error::APK release belum ditandatangani"; exit 1; }
 
       - name: Hapus keystore sementara
